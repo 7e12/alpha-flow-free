@@ -4,9 +4,9 @@ import numpy as np
 
 ## Defined macros
 IMAGE_SCALE         = 0.5
-THRESHOLD           = 100
+THRESHOLD           = 50
 MIN_HW_LINE         = 500
-CLOSING_KERNEL      = 7
+BASE_KERNEL_SIZE    = 19
 ARC_LENGTH_SCALE    = 0.01
 CONTOUR_LENGTH      = 7
                     #           [ B    G    R    C ]
@@ -88,7 +88,7 @@ def original2grid(input_image):
     # cv2.imshow("Grayscale Image", grayscale_image)
 
     ## Threshold grayscale image
-    ret, threshold_image = cv2.threshold(grayscale_image, THRESHOLD, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    ret, threshold_image = cv2.threshold(grayscale_image, THRESHOLD, 255, cv2.THRESH_BINARY)
     # cv2.imshow("Threshold Image", threshold_image)
 
     ## Apply morphological transformation(s)
@@ -155,11 +155,12 @@ def cropped2standard(input_image):
     # cv2.imshow("Grayscale Image", grayscale_image)
 
     ## Threshold grayscale image
-    ret, threshold_image = cv2.threshold(grayscale_image, THRESHOLD, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    ret, threshold_image = cv2.threshold(grayscale_image, THRESHOLD, 255, cv2.THRESH_BINARY)
     # cv2.imshow("Threshold Image", threshold_image)
 
     ## Apply morphological closing transformation(s) to standardize threshold image for converting
-    closing_kernel = np.ones((CLOSING_KERNEL, CLOSING_KERNEL), np.uint8)
+    closing_kernel_size = BASE_KERNEL_SIZE - board_size
+    closing_kernel = np.ones((closing_kernel_size, closing_kernel_size), np.uint8)
     output_image = cv2.morphologyEx(threshold_image, cv2.MORPH_CLOSE, closing_kernel)
     # cv2.imshow("Output Image", output_image)
 
